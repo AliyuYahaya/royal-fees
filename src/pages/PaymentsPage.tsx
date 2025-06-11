@@ -117,28 +117,28 @@ function PaymentInvoiceSelector({
 }
 
 export function PaymentsPage() {
-  const navigate = useNavigate()
-  const { userRole, user } = useAuthStore()
-  const { toast } = useToast()
-  const [payments, setPayments] = useState<PaymentWithDetails[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState<string>("all")
-  const [methodFilter, setMethodFilter] = useState<string>("all")
-  const [showAddPayment, setShowAddPayment] = useState(false)
-  const [selectedInvoice, setSelectedInvoice] = useState<string>("")
-  const [selectedInvoiceData, setSelectedInvoiceData] = useState<any>(null)
-  const [submitting, setSubmitting] = useState(false)
-  const [confirming, setConfirming] = useState<string | null>(null)
-  const [statistics, setStatistics] = useState<any>({})
-  const [downloading, setDownloading] = useState(false)
-  const [paymentForm, setPaymentForm] = useState({
-    amount: '',
-    payment_method: 'cash' as PaymentMethod,
-    transaction_reference: '',
-    bank_name: '',
-    notes: ''
-  })
+const navigate = useNavigate()
+const { userRole, user } = useAuthStore()
+const { toast } = useToast()
+const [payments, setPayments] = useState<PaymentWithDetails[]>([])
+const [loading, setLoading] = useState(true)
+const [searchTerm, setSearchTerm] = useState("")
+const [statusFilter, setStatusFilter] = useState<string>("all")
+const [methodFilter, setMethodFilter] = useState<string>("all")
+const [showAddPayment, setShowAddPayment] = useState(false)
+const [selectedInvoice, setSelectedInvoice] = useState<string>("") 
+const [selectedInvoiceData, setSelectedInvoiceData] = useState<any>(null)
+const [submitting, setSubmitting] = useState(false)
+const [confirming, setConfirming] = useState<string | null>(null)
+const [statistics, setStatistics] = useState<any>({})
+const [downloading, setDownloading] = useState(false)
+const [paymentForm, setPaymentForm] = useState({
+amount: '',
+payment_method: 'cash' as PaymentMethod,
+transaction_reference: '',
+bank_name: '',
+notes: ''
+})
 
   useEffect(() => {
     fetchPayments()
@@ -461,20 +461,21 @@ export function PaymentsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Payments</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Payments</h1>
+            <p className="text-muted-foreground text-sm sm:text-base">
               Record and manage student fee payments with enhanced validation
             </p>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <Button 
               variant="outline" 
               onClick={handleDownloadPayments}
               disabled={downloading || payments.length === 0}
+              className="w-full sm:w-auto"
             >
               {downloading ? (
                 <>
@@ -488,7 +489,7 @@ export function PaymentsPage() {
                 </>
               )}
             </Button>
-            <Button onClick={() => setShowAddPayment(true)}>
+            <Button onClick={() => setShowAddPayment(true)} className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
               Record Payment
             </Button>
@@ -496,38 +497,38 @@ export function PaymentsPage() {
         </div>
 
         {/* Enhanced Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Payments</CardTitle>
-              <Banknote className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs sm:text-sm font-medium">Total Payments</CardTitle>
+              <Banknote className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{statistics.totalCount || 0}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-lg sm:text-2xl font-bold">{statistics.totalCount || 0}</div>
+              <p className="text-xs text-muted-foreground truncate">
                 {statistics.totalAmount ? formatCurrency(statistics.totalAmount) : 'N/A'}
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Today's Payments</CardTitle>
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs sm:text-sm font-medium">Today's Payments</CardTitle>
+              <CreditCard className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{statistics.todayCount || 0}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-lg sm:text-2xl font-bold">{statistics.todayCount || 0}</div>
+              <p className="text-xs text-muted-foreground truncate">
                 {statistics.todayAmount ? formatCurrency(statistics.todayAmount) : 'N/A'}
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs sm:text-sm font-medium">Pending</CardTitle>
+              <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-lg sm:text-2xl font-bold">
                 {payments.filter(p => p.status === 'pending').length}
               </div>
               <p className="text-xs text-muted-foreground">
@@ -537,11 +538,11 @@ export function PaymentsPage() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Confirmed</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs sm:text-sm font-medium">Confirmed</CardTitle>
+              <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-lg sm:text-2xl font-bold">
                 {payments.filter(p => p.status === 'confirmed').length}
               </div>
               <p className="text-xs text-muted-foreground">

@@ -18,7 +18,8 @@ import {
   Eye,
   UserX,
   Download,
-  Users
+  Users,
+  MoreVertical
 } from "lucide-react"
 
 export function StudentsPage() {
@@ -156,20 +157,27 @@ export function StudentsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Students</h1>
-            <p className="text-muted-foreground">Manage student records and information</p>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Students</h1>
+            <p className="text-muted-foreground text-sm sm:text-base">
+              Manage student records and information
+            </p>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" onClick={exportStudents} disabled={students.length === 0}>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <Button 
+              variant="outline" 
+              onClick={exportStudents} 
+              disabled={students.length === 0}
+              className="w-full sm:w-auto"
+            >
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
             {(userRole === 'admin' || userRole === 'registrar') && (
-              <Button onClick={() => navigate('/students/add')}>
+              <Button onClick={() => navigate('/students/add')} className="w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Student
               </Button>
@@ -180,13 +188,13 @@ export function StudentsPage() {
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Filter className="h-5 w-5" />
+            <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+              <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Filters</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Search</label>
                 <div className="relative">
@@ -241,30 +249,30 @@ export function StudentsPage() {
         {/* Students List */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Users className="h-5 w-5" />
+            <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Student List</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
-                    <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 w-48 bg-gray-200 rounded animate-pulse" />
-                      <div className="h-3 w-32 bg-gray-200 rounded animate-pulse" />
+                  <div key={i} className="flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 border rounded-lg">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-full animate-pulse flex-shrink-0" />
+                    <div className="flex-1 space-y-2 min-w-0">
+                      <div className="h-4 w-32 sm:w-48 bg-gray-200 rounded animate-pulse" />
+                      <div className="h-3 w-24 sm:w-32 bg-gray-200 rounded animate-pulse" />
                     </div>
-                    <div className="h-8 w-20 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-8 w-16 sm:w-20 bg-gray-200 rounded animate-pulse" />
                   </div>
                 ))}
               </div>
             ) : students.length === 0 ? (
               <div className="text-center py-8">
-                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium">No students found</h3>
-                <p className="text-muted-foreground">
+                <Users className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-base sm:text-lg font-medium">No students found</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">
                   {searchTerm || classFilter !== 'all' || statusFilter !== 'active'
                     ? 'Try adjusting your filters'
                     : 'Get started by adding your first student'}
@@ -277,61 +285,84 @@ export function StudentsPage() {
                 )}
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {students.map((student) => (
                   <div
                     key={student.id}
-                    className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                    className="flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 border rounded-lg hover:bg-accent/50 transition-colors"
                   >
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="text-primary font-medium">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-primary font-medium text-sm sm:text-base">
                         {student.first_name[0]}{student.last_name[0]}
                       </span>
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3">
-                        <h3 className="font-medium">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                        <h3 className="font-medium text-sm sm:text-base truncate">
                           {student.first_name} {student.last_name}
                         </h3>
-                        <span className="text-xs px-2 py-1 bg-muted rounded-full">
-                          {student.student_id}
-                        </span>
-                        <span className={`text-xs px-2 py-1 rounded-full ${
-                          student.is_active
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {student.is_active ? 'Active' : 'Inactive'}
-                        </span>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs px-2 py-1 bg-muted rounded-full">
+                            {student.student_id}
+                          </span>
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            student.is_active
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                            {student.is_active ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground mt-1">
                         <span>{classLevelToDisplay(student.class_level)}</span>
-                        <span>•</span>
+                        <span className="hidden sm:inline">•</span>
                         <span className="capitalize">{student.gender}</span>
-                        <span>•</span>
-                        <span>Admitted {formatDate(student.admission_date)}</span>
+                        <span className="hidden sm:inline">•</span>
+                        <span className="hidden sm:inline">Admitted {formatDate(student.admission_date)}</span>
                         {student.parent_guardian_name && (
                           <>
-                            <span>•</span>
-                            <span>{student.parent_guardian_name}</span>
+                            <span className="hidden md:inline">•</span>
+                            <span className="hidden md:inline truncate">{student.parent_guardian_name}</span>
                           </>
                         )}
                       </div>
+                      {/* Mobile-only additional info */}
+                      <div className="sm:hidden text-xs text-muted-foreground mt-1">
+                        <div>Admitted {formatDate(student.admission_date)}</div>
+                        {student.parent_guardian_name && (
+                          <div className="truncate">{student.parent_guardian_name}</div>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="sm" onClick={() => navigate(`/students/${student.id}`)}>
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      {(userRole === 'admin' || userRole === 'registrar') && (
-                        <>
-                          <Button variant="ghost" size="sm" onClick={() => navigate(`/students/${student.id}/edit`)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleToggleStatus(student.id, student.is_active)}>
-                            <UserX className="h-4 w-4" />
-                          </Button>
-                        </>
-                      )}
+                    <div className="flex items-center">
+                      {/* Desktop buttons */}
+                      <div className="hidden sm:flex items-center space-x-2">
+                        <Button variant="ghost" size="sm" onClick={() => navigate(`/students/${student.id}`)}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {(userRole === 'admin' || userRole === 'registrar') && (
+                          <>
+                            <Button variant="ghost" size="sm" onClick={() => navigate(`/students/${student.id}/edit`)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleToggleStatus(student.id, student.is_active)}>
+                              <UserX className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                      
+                      {/* Mobile menu button */}
+                      <div className="sm:hidden">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => navigate(`/students/${student.id}`)}
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}

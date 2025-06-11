@@ -23,7 +23,7 @@ export type PaymentStatus = 'pending' | 'confirmed' | 'failed' | 'reversed'
 export type ExamType = 'neco' | 'waec' | 'jss3_exam' | 'primary6_exam'
 export type ActivityType = 
   | 'student_added' | 'student_updated' | 'student_deleted'
-  | 'invoice_generated' | 'invoice_printed' | 'payment_received'
+  | 'invoice_generated' | 'invoice_printed' | 'invoice_status_updated' | 'payment_received'
   | 'payment_confirmed' | 'user_login' | 'fee_structure_updated'
 
 export interface Database {

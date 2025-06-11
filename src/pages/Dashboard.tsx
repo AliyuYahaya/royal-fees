@@ -180,16 +180,16 @@ export function Dashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
             {userRole === 'admin' ? 'Admin Dashboard' : 
              userRole === 'registrar' ? 'Registrar Dashboard' :
              userRole === 'payment_desk_officer' ? 'Finance Dashboard' :
              'Dashboard'}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-sm sm:text-base mt-1">
             {userRole === 'admin' ? 'Complete system overview and management controls.' :
              userRole === 'registrar' ? 'Student management and academic administration.' :
              userRole === 'payment_desk_officer' ? 'Payment processing and invoice management.' :
@@ -197,19 +197,19 @@ export function Dashboard() {
           </p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {/* Stats Grid - Responsive layout */}
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
           {loading ? (
             // Loading skeleton
             Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i}>
+              <Card key={i} className="min-h-[100px] sm:min-h-[120px]">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-4 w-4 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-3 sm:h-4 w-16 sm:w-20 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-3 sm:h-4 w-3 sm:w-4 bg-gray-200 rounded animate-pulse" />
                 </CardHeader>
                 <CardContent>
-                  <div className="h-8 w-24 bg-gray-200 rounded animate-pulse mb-1" />
-                  <div className="h-3 w-16 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-6 sm:h-8 w-16 sm:w-24 bg-gray-200 rounded animate-pulse mb-1" />
+                  <div className="h-2 sm:h-3 w-12 sm:w-16 bg-gray-200 rounded animate-pulse" />
                 </CardContent>
               </Card>
             ))
@@ -217,18 +217,18 @@ export function Dashboard() {
             filteredStatCards.map((stat, index) => {
               const Icon = stat.icon
               return (
-                <Card key={index}>
+                <Card key={index} className="min-h-[100px] sm:min-h-[120px]">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
+                    <CardTitle className="text-xs sm:text-sm font-medium truncate pr-2">
                       {stat.title}
                     </CardTitle>
-                    <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                      <Icon className={`h-4 w-4 ${stat.color}`} />
+                    <div className={`p-1.5 sm:p-2 rounded-lg ${stat.bgColor} flex-shrink-0`}>
+                      <Icon className={`h-3 w-3 sm:h-4 sm:w-4 ${stat.color}`} />
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{stat.value}</div>
-                    <p className="text-xs text-muted-foreground">
+                    <div className="text-lg sm:text-2xl font-bold truncate">{stat.value}</div>
+                    <p className="text-xs text-muted-foreground truncate">
                       {stat.description}
                     </p>
                   </CardContent>
@@ -238,20 +238,20 @@ export function Dashboard() {
           )}
         </div>
 
-        {/* Quick Actions - Role-based */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {/* Quick Actions - Mobile responsive grid */}
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {/* Student Management - Admin & Registrar only */}
           {(userRole === 'admin' || userRole === 'registrar') && (
             <Card 
               className="cursor-pointer hover:shadow-md transition-shadow hover:border-primary/50"
               onClick={() => navigate('/students')}
             >
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Users className="h-5 w-5 text-primary" />
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center space-x-2 text-base">
+                  <Users className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
                   <span>Student Management</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   View and manage student records
                 </CardDescription>
               </CardHeader>
@@ -264,12 +264,12 @@ export function Dashboard() {
               className="cursor-pointer hover:shadow-md transition-shadow hover:border-primary/50"
               onClick={() => navigate('/students/add')}
             >
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <UserPlus className="h-5 w-5 text-primary" />
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center space-x-2 text-base">
+                  <UserPlus className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
                   <span>Add New Student</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   Register a new student to the system
                 </CardDescription>
               </CardHeader>
@@ -282,14 +282,14 @@ export function Dashboard() {
               className="cursor-pointer hover:shadow-md transition-shadow hover:border-primary/50"
               onClick={() => navigate('/invoices')}
             >
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Receipt className="h-5 w-5 text-primary" />
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center space-x-2 text-base">
+                  <Receipt className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
                   <span>
                     {userRole === 'payment_desk_officer' ? 'View Invoices' : 'Generate Invoice'}
                   </span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   {userRole === 'payment_desk_officer' 
                     ? 'Search and print student invoices'
                     : 'Create new invoices for student fees'
@@ -304,12 +304,12 @@ export function Dashboard() {
             className="cursor-pointer hover:shadow-md transition-shadow hover:border-primary/50"
             onClick={() => navigate('/payments')}
           >
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Banknote className="h-5 w-5 text-primary" />
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center space-x-2 text-base">
+                <Banknote className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
                 <span>Record Payment</span>
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm">
                 Process and record fee payments
               </CardDescription>
             </CardHeader>
@@ -321,12 +321,12 @@ export function Dashboard() {
               className="cursor-pointer hover:shadow-md transition-shadow hover:border-primary/50"
               onClick={() => navigate('/fee-structure')}
             >
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <CreditCard className="h-5 w-5 text-primary" />
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center space-x-2 text-base">
+                  <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
                   <span>Fee Structure</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   Configure school fees and pricing
                 </CardDescription>
               </CardHeader>
@@ -339,12 +339,12 @@ export function Dashboard() {
               className="cursor-pointer hover:shadow-md transition-shadow hover:border-primary/50"
               onClick={() => navigate('/reports')}
             >
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <FileText className="h-5 w-5 text-primary" />
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center space-x-2 text-base">
+                  <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
                   <span>Reports</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   Generate financial and academic reports
                 </CardDescription>
               </CardHeader>
@@ -352,14 +352,14 @@ export function Dashboard() {
           )}
         </div>
 
-        {/* Recent Activity - Role-based */}
+        {/* Recent Activity - Mobile responsive */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Calendar className="h-5 w-5" />
+            <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+              <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Recent Activity</span>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-sm">
               {userRole === 'admin' ? 'System-wide activities and changes' :
                userRole === 'registrar' ? 'Student and academic activities' :
                userRole === 'payment_desk_officer' ? 'Payment and invoice activities' :
@@ -367,33 +367,33 @@ export function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {userRole === 'payment_desk_officer' ? (
                 // Payment Desk Officer specific activities
                 <>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <div className="flex-1">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">Payment received</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground break-words">
                         NGN 45,000 from John Doe - 2 minutes ago
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    <div className="flex-1">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">Invoice printed</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground break-words">
                         Invoice INV-001234 printed for Jane Smith - 15 minutes ago
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full" />
-                    <div className="flex-1">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">Payment confirmed</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground break-words">
                         Bank transfer confirmed for David Johnson - 1 hour ago
                       </p>
                     </div>
@@ -402,29 +402,29 @@ export function Dashboard() {
               ) : userRole === 'registrar' ? (
                 // Registrar specific activities
                 <>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    <div className="flex-1">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">New student added</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground break-words">
                         Jane Smith added to SSS 1 - 15 minutes ago
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full" />
-                    <div className="flex-1">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">Invoice generated</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground break-words">
                         Invoice INV-001234 for Third Term fees - 1 hour ago
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full" />
-                    <div className="flex-1">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">Student updated</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground break-words">
                         Contact info updated for Michael Brown - 2 hours ago
                       </p>
                     </div>
@@ -433,29 +433,29 @@ export function Dashboard() {
               ) : (
                 // Admin sees all activities
                 <>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <div className="flex-1">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">Payment received</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground break-words">
                         NGN 45,000 from John Doe - 2 minutes ago
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    <div className="flex-1">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">New student added</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground break-words">
                         Jane Smith added to SSS 1 by registrar - 15 minutes ago
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full" />
-                    <div className="flex-1">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">Fee structure updated</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground break-words">
                         SSS 1 fees updated for 2024/2025 session - 1 hour ago
                       </p>
                     </div>

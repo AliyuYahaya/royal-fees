@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/store/auth"
 import { auth } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
-import Logo from "@/assets/logo.png" // Adjust the path as necessary
+import Logo from "@/assets/logo.png"
 import {
   LayoutDashboard,
   Users,
@@ -16,15 +16,18 @@ import {
   Menu,
   X,
   UserPlus,
-  Banknote
+  Banknote,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface SidebarProps {
   className?: string
+  onClose?: () => void
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, onClose }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
@@ -104,6 +107,12 @@ export function Sidebar({ className }: SidebarProps) {
     userRole && item.roles.includes(userRole)
   )
 
+  const handleNavClick = () => {
+    if (onClose) {
+      onClose()
+    }
+  }
+
   return (
     <div className={cn(
       "flex flex-col h-full bg-card border-r border-border",
@@ -114,31 +123,46 @@ export function Sidebar({ className }: SidebarProps) {
       <div className="flex items-center justify-between p-4 border-b border-border">
         {!collapsed && (
           <div className="flex items-center space-x-2">
-            <div className=" rounded-lg">
-              <img src={Logo} alt="Logo" className="h-12 w-12" />
+            <div className="rounded-lg">
+              <img src={Logo} alt="Logo" className="h-10 w-10 sm:h-12 sm:w-12" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold">Royal Fees</h2>
+              <h2 className="text-base sm:text-lg font-semibold">Royal Fees</h2>
               <p className="text-xs text-muted-foreground">Fee Management</p>
             </div>
           </div>
         )}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setCollapsed(!collapsed)}
-          className="h-8 w-8"
-        >
-          {collapsed ? (
-            <Menu className="h-4 w-4" />
-          ) : (
-            <X className="h-4 w-4" />
+        
+        {/* Close button for mobile, collapse button for desktop */}
+        <div className="flex items-center space-x-1">
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="h-8 w-8 lg:hidden"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           )}
-        </Button>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setCollapsed(!collapsed)}
+            className="h-8 w-8 hidden lg:flex"
+          >
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronLeft className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-3 sm:p-4 space-y-1 sm:space-y-2 overflow-y-auto">
         {filteredNavigation.map((item) => {
           const Icon = item.icon
           const isActive = location.pathname === item.href
@@ -147,8 +171,9 @@ export function Sidebar({ className }: SidebarProps) {
             <Link
               key={item.name}
               to={item.href}
+              onClick={handleNavClick}
               className={cn(
-                "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                "flex items-center space-x-3 px-3 py-2.5 sm:py-2 rounded-lg text-sm font-medium transition-colors",
                 isActive
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground hover:bg-accent",
@@ -156,14 +181,14 @@ export function Sidebar({ className }: SidebarProps) {
               )}
             >
               <Icon className="h-5 w-5 flex-shrink-0" />
-              {!collapsed && <span>{item.name}</span>}
+              {!collapsed && <span className="truncate">{item.name}</span>}
             </Link>
           )
         })}
       </nav>
 
       {/* User Info */}
-      <div className="p-4 border-t border-border">
+      <div className="p-3 sm:p-4 border-t border-border">
         {!collapsed && (
           <div className="mb-3">
             <p className="text-sm font-medium truncate">
