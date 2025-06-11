@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/lib/supabase"
 import { formatCurrency, formatDate, classLevelToDisplay } from "@/lib/utils"
-import { useAuthStore } from "@/store/auth"
 import type { InvoiceWithDetails } from "@/types"
 import {
   ArrowLeft,

@@ -71,6 +71,81 @@ export function PaymentDetailsPage() {
     }
   }
 
+  const handleConfirmPayment = async () => {
+    if (!payment || confirming) return
+
+    try {
+      setConfirming(true)
+
+      const { data: currentUser } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', useAuthStore.getState().user?.email)
+        .single()
+
+      if (!currentUser) {
+        throw new Error('User not found')
+      }
+
+      const result = await confirmPayment(payment.id, currentUser.id)
+
+      await supabase
+        .from('activity_logs')
+        .insert({
+          user_id: currentUser.id,
+          activity_type: 'payment_confirmed',
+          description: `Payment confirmed: ${formatCurrency(result.payment.amount)}`,
+          entity_type: 'payment',
+          entity_id: payment.id
+        })
+
+      toast({
+        title: "Success",
+        description: "Payment confirmed successfully"
+      })
+
+      fetchPaymentDetails()
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to confirm payment"
+      })
+    } finally {
+      setConfirming(false)
+    }
+  }
+
+  const handleValidateInvoicePayments = async () => {
+    if (!payment?.invoice_id || validating) return
+
+    try {
+      setValidating(true)
+      const validation = await validateInvoicePayments(payment.invoice_id)
+      
+      if (validation.isValid) {
+        toast({
+          title: "Validation Successful",
+          description: "All payments for this invoice are valid"
+        })
+      } else {
+        toast({
+          variant: "destructive", 
+          title: "Validation Issues",
+          description: validation.errors.join('; ')
+        })
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to validate payments"
+      })
+    } finally {
+      setValidating(false)
+    }
+  }
+
   const handleDownloadPDF = async () => {
     try {
       setDownloading(true)

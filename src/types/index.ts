@@ -1,4 +1,17 @@
 import { Database } from './database'
+import type {
+  UserRole,
+  UserStatus,
+  ClassLevel,
+  Gender,
+  PaymentTermType,
+  SchoolTerm,
+  InvoiceStatus,
+  PaymentMethod,
+  PaymentStatus,
+  ExamType,
+  ActivityType
+} from './database'
 
 export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']
 

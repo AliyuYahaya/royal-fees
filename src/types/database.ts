@@ -381,14 +381,14 @@ export interface Database {
 }
 
 // Additional type definitions for application use
-export interface Student extends Database['public']['Tables']['students']['Row'] {}
-export interface User extends Database['public']['Tables']['users']['Row'] {}
-export interface Invoice extends Database['public']['Tables']['invoices']['Row'] {}
-export interface Payment extends Database['public']['Tables']['payments']['Row'] {}
-export interface AcademicSession extends Database['public']['Tables']['academic_sessions']['Row'] {}
-export interface FeeCategory extends Database['public']['Tables']['fee_categories']['Row'] {}
-export interface FeeStructure extends Database['public']['Tables']['fee_structures']['Row'] {}
-export interface ActivityLog extends Database['public']['Tables']['activity_logs']['Row'] {}
+export type Student = Database['public']['Tables']['students']['Row']
+export type User = Database['public']['Tables']['users']['Row']
+export type Invoice = Database['public']['Tables']['invoices']['Row']
+export type Payment = Database['public']['Tables']['payments']['Row']
+export type AcademicSession = Database['public']['Tables']['academic_sessions']['Row']
+export type FeeCategory = Database['public']['Tables']['fee_categories']['Row']
+export type FeeStructure = Database['public']['Tables']['fee_structures']['Row']
+export type ActivityLog = Database['public']['Tables']['activity_logs']['Row']
 
 // Extended types for UI components with all required properties
 export interface StudentWithInvoices {
