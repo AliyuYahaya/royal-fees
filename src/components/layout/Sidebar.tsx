@@ -13,7 +13,6 @@ import {
   FileText,
   Settings,
   LogOut,
-  Menu,
   X,
   UserPlus,
   Banknote,
