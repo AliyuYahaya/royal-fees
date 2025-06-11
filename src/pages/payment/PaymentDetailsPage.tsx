@@ -8,8 +8,7 @@ import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/lib/supabase"
 import { formatCurrency, formatDate, classLevelToDisplay } from "@/lib/utils"
 import { useAuthStore } from "@/store/auth"
-import { handleAsyncOperation } from "@/lib/errors/handlers"
-import { validateInvoicePayments, confirmPayment } from "@/lib/paymentService"
+import { confirmPayment, validateInvoicePayments } from "@/lib/paymentService"
 import type { PaymentWithDetails } from "@/types"
 import {
   ArrowLeft,
@@ -17,8 +16,6 @@ import {
   Printer,
   Receipt,
   User,
-  Calendar,
-  CreditCard,
   CheckCircle,
   Clock,
   AlertCircle,

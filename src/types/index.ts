@@ -18,6 +18,28 @@ export interface StudentWithInvoices extends Student {
   last_payment_date?: string
 }
 
+export interface StudentWithDetails {
+  id: string
+  student_id: string
+  first_name: string
+  last_name: string
+  middle_name?: string | null
+  class_level: ClassLevel
+  gender: Gender
+  date_of_birth?: string | null
+  parent_guardian_name?: string | null
+  parent_guardian_phone?: string | null
+  parent_guardian_email?: string | null
+  address?: string | null
+  payment_term: PaymentTermType
+  admission_date: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+  created_by?: string | null
+  updated_by?: string | null
+}
+
 export interface InvoiceWithDetails extends Invoice {
   student?: Student
   academic_session?: AcademicSession

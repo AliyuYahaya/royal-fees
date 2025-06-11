@@ -138,7 +138,6 @@ export async function confirmPayment(
     // Calculate new paid amount and status after this payment is confirmed
     const newPaidAmount = invoice.current_paid_amount + payment.amount
     const newStatus = calculateInvoiceStatus(invoice.total_amount, newPaidAmount)
-    const newBalance = invoice.total_amount - newPaidAmount
 
     // Update payment status
     const { error: updatePaymentError } = await supabase

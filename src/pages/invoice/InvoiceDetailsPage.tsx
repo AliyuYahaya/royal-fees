@@ -25,7 +25,6 @@ import {
 export function InvoiceDetailsPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { userRole } = useAuthStore()
   const { toast } = useToast()
   const [invoice, setInvoice] = useState<InvoiceWithDetails | null>(null)
   const [loading, setLoading] = useState(true)

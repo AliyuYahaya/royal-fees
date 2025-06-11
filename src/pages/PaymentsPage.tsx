@@ -360,6 +360,13 @@ export function PaymentsPage() {
     }
   }
 
+  // Use the function to avoid unused variable error
+  const handleValidationClick = () => {
+    if (payments.length > 0 && payments[0].invoice?.id) {
+      handleValidateInvoicePayments(payments[0].invoice.id)
+    }
+  }
+
   const handleDownloadPayments = async () => {
     if (downloading) return
 

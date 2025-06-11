@@ -391,20 +391,86 @@ export interface FeeStructure extends Database['public']['Tables']['fee_structur
 export interface ActivityLog extends Database['public']['Tables']['activity_logs']['Row'] {}
 
 // Extended types for UI components with all required properties
-export interface StudentWithInvoices extends Student {
+export interface StudentWithInvoices {
+  id: string
+  student_id: string
+  first_name: string
+  last_name: string
+  middle_name?: string | null
+  class_level: ClassLevel
+  gender: Gender
+  date_of_birth?: string | null
+  parent_guardian_name?: string | null
+  parent_guardian_phone?: string | null
+  parent_guardian_email?: string | null
+  address?: string | null
+  payment_term: PaymentTermType
+  admission_date: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+  created_by?: string | null
+  updated_by?: string | null
   invoices?: Invoice[]
   totalFees?: number
   totalPaid?: number
   balance?: number
 }
 
-export interface InvoiceWithDetails extends Invoice {
+export interface StudentWithDetails {
+  id: string
+  student_id: string
+  first_name: string
+  last_name: string
+  middle_name?: string | null
+  class_level: ClassLevel
+  gender: Gender
+  date_of_birth?: string | null
+  parent_guardian_name?: string | null
+  parent_guardian_phone?: string | null
+  parent_guardian_email?: string | null
+  address?: string | null
+  payment_term: PaymentTermType
+  admission_date: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+  created_by?: string | null
+  updated_by?: string | null
+}
+
+export interface InvoiceWithDetails {
+  id: string
+  invoice_number: string
+  student_id: string
+  academic_session_id: string
+  term?: SchoolTerm | null
+  total_amount: number
+  paid_amount: number
+  balance: number
+  status: InvoiceStatus
+  due_date?: string | null
+  generated_at: string
+  generated_by?: string | null
   student?: Student
   academic_session?: AcademicSession
   payments?: Payment[]
 }
 
-export interface PaymentWithDetails extends Payment {
+export interface PaymentWithDetails {
+  id: string
+  payment_reference: string
+  invoice_id: string
+  amount: number
+  payment_method: PaymentMethod
+  payment_date: string
+  transaction_reference?: string | null
+  bank_name?: string | null
+  status: PaymentStatus
+  notes?: string | null
+  received_by?: string | null
+  confirmed_by?: string | null
+  created_at: string
   invoice?: Invoice & {
     student?: Student
   }
