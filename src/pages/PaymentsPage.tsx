@@ -700,13 +700,13 @@ notes: ''
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Filter className="h-5 w-5" />
+            <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+              <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Filters</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Search</label>
                 <div className="relative">
@@ -763,30 +763,30 @@ notes: ''
         {/* Enhanced Payments List */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Banknote className="h-5 w-5" />
+            <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+              <Banknote className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Payment History</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
-                    <div className="w-16 h-12 bg-gray-200 rounded animate-pulse" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 w-48 bg-gray-200 rounded animate-pulse" />
-                      <div className="h-3 w-32 bg-gray-200 rounded animate-pulse" />
+                  <div key={i} className="flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 border rounded-lg">
+                    <div className="w-12 h-10 sm:w-16 sm:h-12 bg-gray-200 rounded animate-pulse flex-shrink-0" />
+                    <div className="flex-1 space-y-2 min-w-0">
+                      <div className="h-4 w-32 sm:w-48 bg-gray-200 rounded animate-pulse" />
+                      <div className="h-3 w-24 sm:w-32 bg-gray-200 rounded animate-pulse" />
                     </div>
-                    <div className="h-8 w-20 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-8 w-16 sm:w-20 bg-gray-200 rounded animate-pulse" />
                   </div>
                 ))}
               </div>
             ) : payments.length === 0 ? (
               <div className="text-center py-8">
-                <Banknote className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium">No payments found</h3>
-                <p className="text-muted-foreground">
+                <Banknote className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-base sm:text-lg font-medium">No payments found</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">
                   {searchTerm || statusFilter !== 'all' || methodFilter !== 'all'
                     ? 'Try adjusting your filters'
                     : 'No payments have been recorded yet'
@@ -801,48 +801,50 @@ notes: ''
                 </Button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {payments.map((payment) => (
                   <div 
                     key={payment.id} 
-                    className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                    className="flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 border rounded-lg hover:bg-accent/50 transition-colors"
                   >
-                    <div className="w-16 h-12 bg-primary/10 rounded flex items-center justify-center">
-                      <Banknote className="h-6 w-6 text-primary" />
+                    <div className="w-12 h-10 sm:w-16 sm:h-12 bg-primary/10 rounded flex items-center justify-center flex-shrink-0">
+                      <Banknote className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-1">
-                        <h3 className="font-medium">{payment.payment_reference}</h3>
-                        {getStatusBadge(payment.status)}
-                        <span className="text-xs px-2 py-1 bg-muted rounded-full capitalize">
-                          {payment.payment_method.replace('_', ' ')}
-                        </span>
-                        {payment.payment_method === 'bank_transfer' && payment.bank_name && (
-                          <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full flex items-center">
-                            <Building className="h-3 w-3 mr-1" />
-                            {payment.bank_name}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
+                        <h3 className="font-medium text-sm sm:text-base truncate">{payment.payment_reference}</h3>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {getStatusBadge(payment.status)}
+                          <span className="text-xs px-2 py-1 bg-muted rounded-full capitalize">
+                            {payment.payment_method.replace('_', ' ')}
                           </span>
-                        )}
+                          {payment.payment_method === 'bank_transfer' && payment.bank_name && (
+                            <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full flex items-center">
+                              <Building className="h-3 w-3 mr-1" />
+                              <span className="truncate max-w-20">{payment.bank_name}</span>
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                        <span>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
+                        <span className="truncate">
                           {payment.invoice?.student?.first_name} {payment.invoice?.student?.last_name}
                         </span>
-                        <span>•</span>
+                        <span className="hidden sm:inline">•</span>
                         <span>{payment.invoice?.invoice_number}</span>
-                        <span>•</span>
-                        <span>{formatDate(payment.payment_date)}</span>
+                        <span className="hidden sm:inline">•</span>
+                        <span className="hidden md:inline">{formatDate(payment.payment_date)}</span>
                         {payment.transaction_reference && (
                           <>
-                            <span>•</span>
-                            <span className="flex items-center">
+                            <span className="hidden lg:inline">•</span>
+                            <span className="hidden lg:inline md:flex items-center">
                               <Hash className="h-3 w-3 mr-1" />
-                              {payment.transaction_reference}
+                              <span className="truncate max-w-24">{payment.transaction_reference}</span>
                             </span>
                           </>
                         )}
                       </div>
-                      <div className="flex items-center space-x-4 text-sm mt-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm mt-1">
                         <span className="font-medium text-green-600">
                           {formatCurrency(payment.amount)}
                         </span>
@@ -850,29 +852,53 @@ notes: ''
                           Invoice Balance: {formatCurrency(payment.invoice?.balance || 0)}
                         </span>
                       </div>
+                      {/* Mobile-only additional info */}
+                      <div className="sm:hidden text-xs text-muted-foreground mt-1">
+                        <div>{formatDate(payment.payment_date)}</div>
+                        {payment.transaction_reference && (
+                          <div className="flex items-center">
+                            <Hash className="h-3 w-3 mr-1" />
+                            <span className="truncate">{payment.transaction_reference}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => navigate(`/payments/${payment.id}`)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      {payment.status === 'pending' && userRole === 'admin' && (
+                    <div className="flex items-center">
+                      {/* Desktop actions */}
+                      <div className="hidden sm:flex items-center space-x-2">
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          onClick={() => handleConfirmPayment(payment.id)}
-                          disabled={confirming === payment.id}
+                          onClick={() => navigate(`/payments/${payment.id}`)}
                         >
-                          {confirming === payment.id ? (
-                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                          ) : (
-                            <CheckCircle className="h-4 w-4" />
-                          )}
+                          <Eye className="h-4 w-4" />
                         </Button>
-                      )}
+                        {payment.status === 'pending' && userRole === 'admin' && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => handleConfirmPayment(payment.id)}
+                            disabled={confirming === payment.id}
+                          >
+                            {confirming === payment.id ? (
+                              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <CheckCircle className="h-4 w-4" />
+                            )}
+                          </Button>
+                        )}
+                      </div>
+                      
+                      {/* Mobile action */}
+                      <div className="sm:hidden">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => navigate(`/payments/${payment.id}`)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}

@@ -14,6 +14,7 @@ import { PaymentsPage } from "@/pages/PaymentsPage"
 import { PaymentDetailsPage } from "@/pages/payment/PaymentDetailsPage"
 import { FeeStructurePage } from "@/pages/FeeStructurePage"
 import { ReportsPage } from "@/pages/ReportsPage"
+import { SettingsPage } from "@/pages/SettingsPage"
 import { Toaster } from "@/components/ui/toaster"
 import { useAuthStore } from "@/store/auth"
 import { auth } from "@/lib/supabase"
@@ -101,7 +102,7 @@ function App() {
             />
             <Route
               path="/settings"
-              element={user ? <div>Settings Page</div> : <Navigate to="/login" replace />}
+              element={user ? <SettingsPage /> : <Navigate to="/login" replace />}
             />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
