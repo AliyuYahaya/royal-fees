@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { auth } from "@/lib/supabase"
 import { useAuthStore } from "@/store/auth"
 import { useToast } from "@/hooks/use-toast"
-import { Crown } from "lucide-react"
+import Logo from "@/assets/logo.png" // Adjust the path as necessary
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
@@ -54,8 +54,8 @@ export function LoginForm() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center mb-4">
-            <div className="bg-primary p-3 rounded-full">
-              <Crown className="h-8 w-8 text-white" />
+            <div className="rounded-full">
+              <img src={Logo} alt="Logo" className="h-16 w-16" />
             </div>
           </div>
           <CardTitle className="text-2xl text-center">Royal Fees</CardTitle>
