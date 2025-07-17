@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/lib/supabase"
 import { formatCurrency, formatDate, classLevelToDisplay } from "@/lib/utils"
+import { generateInvoicePDF, printInvoice } from "@/lib/pdfUtils"
 import type { InvoiceWithDetails } from "@/types"
 import {
   ArrowLeft,
@@ -65,29 +66,18 @@ export function InvoiceDetailsPage() {
   }
 
   const handleDownloadPDF = async () => {
+    if (!invoice) return
+    
     try {
       setDownloading(true)
-      
-      // Create HTML content for PDF
-      const htmlContent = generateInvoiceHTML()
-      
-      // Create a new window for printing
-      const printWindow = window.open('', '_blank')
-      if (printWindow) {
-        printWindow.document.write(htmlContent)
-        printWindow.document.close()
-        
-        // Wait for content to load then trigger print
-        printWindow.onload = () => {
-          printWindow.print()
-        }
-      }
+      await generateInvoicePDF(invoice)
       
       toast({
         title: "Success",
-        description: "Invoice PDF generated successfully"
+        description: "Invoice PDF downloaded successfully"
       })
     } catch (error) {
+      console.error('Error generating PDF:', error)
       toast({
         variant: "destructive",
         title: "Error",
@@ -98,131 +88,23 @@ export function InvoiceDetailsPage() {
     }
   }
 
-  const generateInvoiceHTML = () => {
-    if (!invoice) return ''
+  const handlePrint = () => {
+    if (!invoice) return
     
-    return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Invoice ${invoice.invoice_number}</title>
-        <style>
-          body { font-family: Arial, sans-serif; margin: 20px; }
-          .header { text-align: center; margin-bottom: 30px; }
-          .invoice-details { margin-bottom: 30px; }
-          .student-details { margin-bottom: 30px; }
-          .fee-breakdown { margin-bottom: 30px; }
-          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-          th { background-color: #f2f2f2; }
-          .total { font-weight: bold; font-size: 18px; }
-          .status { padding: 4px 8px; border-radius: 4px; }
-          .status.pending { background: #fef3c7; color: #92400e; }
-          .status.paid { background: #d1fae5; color: #065f46; }
-          .status.partial { background: #dbeafe; color: #1e40af; }
-          .status.overdue { background: #fee2e2; color: #991b1b; }
-        </style>
-      </head>
-      <body>
-        <div class="header">
-          <h1>ROYAL FEES MANAGEMENT SYSTEM</h1>
-          <h2>INVOICE</h2>
-        </div>
-        
-        <div class="invoice-details">
-          <table>
-            <tr>
-              <td><strong>Invoice Number:</strong></td>
-              <td>${invoice.invoice_number}</td>
-              <td><strong>Status:</strong></td>
-              <td><span class="status ${invoice.status}">${invoice.status.toUpperCase()}</span></td>
-            </tr>
-            <tr>
-              <td><strong>Generated Date:</strong></td>
-              <td>${formatDate(invoice.generated_at)}</td>
-              <td><strong>Due Date:</strong></td>
-              <td>${invoice.due_date ? formatDate(invoice.due_date) : 'Not set'}</td>
-            </tr>
-            <tr>
-              <td><strong>Academic Session:</strong></td>
-              <td>${invoice.academic_session?.session_name || 'N/A'}</td>
-              <td><strong>Term:</strong></td>
-              <td>${invoice.term ? invoice.term.split('_').map(word => 
-                word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : 'Not specified'}</td>
-            </tr>
-          </table>
-        </div>
-
-        <div class="student-details">
-          <h3>Student Information</h3>
-          <table>
-            <tr>
-              <td><strong>Student Name:</strong></td>
-              <td>${invoice.student?.first_name} ${invoice.student?.last_name}</td>
-              <td><strong>Student ID:</strong></td>
-              <td>${invoice.student?.student_id}</td>
-            </tr>
-            <tr>
-              <td><strong>Class:</strong></td>
-              <td>${classLevelToDisplay(invoice.student?.class_level || '')}</td>
-              <td><strong>Parent/Guardian:</strong></td>
-              <td>${invoice.student?.parent_guardian_name || 'Not provided'}</td>
-            </tr>
-          </table>
-        </div>
-
-        <div class="fee-breakdown">
-          <h3>Payment Summary</h3>
-          <table>
-            <tr>
-              <td><strong>Total Amount:</strong></td>
-              <td class="total">${formatCurrency(invoice.total_amount)}</td>
-            </tr>
-            <tr>
-              <td><strong>Amount Paid:</strong></td>
-              <td>${formatCurrency(invoice.paid_amount)}</td>
-            </tr>
-            <tr>
-              <td><strong>Outstanding Balance:</strong></td>
-              <td class="total">${formatCurrency(invoice.balance)}</td>
-            </tr>
-          </table>
-        </div>
-
-        ${invoice.payments && invoice.payments.length > 0 ? `
-        <div class="payments">
-          <h3>Payment History</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Reference</th>
-                <th>Method</th>
-                <th>Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${invoice.payments.map(payment => `
-                <tr>
-                  <td>${formatDate(payment.payment_date)}</td>
-                  <td>${payment.payment_reference}</td>
-                  <td>${payment.payment_method.replace('_', ' ').toUpperCase()}</td>
-                  <td>${formatCurrency(payment.amount)}</td>
-                  <td><span class="status ${payment.status}">${payment.status.toUpperCase()}</span></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-        ` : ''}
-
-        <div style="margin-top: 50px; text-align: center; font-size: 12px; color: #666;">
-          Generated on ${formatDate(new Date().toISOString())} | Royal Fees Management System
-        </div>
-      </body>
-      </html>
-    `
+    try {
+      printInvoice(invoice)
+      toast({
+        title: "Success",
+        description: "Invoice sent to printer"
+      })
+    } catch (error) {
+      console.error('Error printing invoice:', error)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to print invoice"
+      })
+    }
   }
 
   const getStatusIcon = (status: string) => {
@@ -338,7 +220,7 @@ export function InvoiceDetailsPage() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => window.print()}
+              onClick={handlePrint}
             >
               <Printer className="h-4 w-4 mr-2" />
               Print

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/lib/supabase"
 import { formatCurrency, formatDate, classLevelToDisplay } from "@/lib/utils"
+import { generateInvoicePDF, printInvoice } from "@/lib/pdfUtils"
 import { useAuthStore } from "@/store/auth"
 import type { InvoiceWithDetails } from "@/types"
 import {
@@ -92,12 +93,13 @@ export function InvoicesPage() {
     }
   }
 
-  const handlePrintInvoice = async (invoiceId: string) => {
+  const handlePrintInvoice = async (invoice: InvoiceWithDetails) => {
     try {
-      // In a real app, this would generate a PDF or open a print dialog
+      printInvoice(invoice)
+      
       toast({
         title: "Print Invoice",
-        description: "Invoice sent to printer (demo)"
+        description: "Invoice sent to printer"
       })
       
       // Log the print activity
@@ -113,9 +115,9 @@ export function InvoicesPage() {
           .insert({
             user_id: currentUser.id,
             activity_type: 'invoice_printed',
-            description: `Invoice printed: ${invoiceId}`,
+            description: `Invoice printed: ${invoice.invoice_number}`,
             entity_type: 'invoice',
-            entity_id: invoiceId
+            entity_id: invoice.id
           })
       }
     } catch (error) {
@@ -123,6 +125,42 @@ export function InvoicesPage() {
         variant: "destructive",
         title: "Error",
         description: "Failed to print invoice"
+      })
+    }
+  }
+
+  const handleDownloadInvoice = async (invoice: InvoiceWithDetails) => {
+    try {
+      await generateInvoicePDF(invoice)
+      
+      toast({
+        title: "Download Invoice",
+        description: "Invoice PDF downloaded successfully"
+      })
+      
+      // Log the download activity
+      const { data: currentUser } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', useAuthStore.getState().user?.email)
+        .single()
+
+      if (currentUser) {
+        await supabase
+          .from('activity_logs')
+          .insert({
+            user_id: currentUser.id,
+            activity_type: 'invoice_downloaded',
+            description: `Invoice downloaded: ${invoice.invoice_number}`,
+            entity_type: 'invoice',
+            entity_id: invoice.id
+          })
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to download invoice"
       })
     }
   }
@@ -382,14 +420,14 @@ export function InvoicesPage() {
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          onClick={() => handlePrintInvoice(invoice.id)}
+                          onClick={() => handlePrintInvoice(invoice)}
                         >
                           <Printer className="h-4 w-4" />
                         </Button>
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          onClick={() => window.open(`/invoices/${invoice.id}/pdf`, '_blank')}
+                          onClick={() => handleDownloadInvoice(invoice)}
                         >
                           <Download className="h-4 w-4" />
                         </Button>

@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase"
 import { formatCurrency, formatDate, classLevelToDisplay } from "@/lib/utils"
 import { useAuthStore } from "@/store/auth"
 import { confirmPayment, validateInvoicePayments } from "@/lib/paymentService"
+import { generatePaymentReceiptPDF, printPaymentReceipt } from "@/lib/pdfUtils"
 import type { PaymentWithDetails } from "@/types"
 import {
   ArrowLeft,
@@ -147,148 +148,45 @@ export function PaymentDetailsPage() {
   }
 
   const handleDownloadPDF = async () => {
+    if (!payment) return
+    
     try {
       setDownloading(true)
-      
-      // Create HTML content for PDF
-      const htmlContent = generateReceiptHTML()
-      
-      // Create a new window for printing
-      const printWindow = window.open('', '_blank')
-      if (printWindow) {
-        printWindow.document.write(htmlContent)
-        printWindow.document.close()
-        
-        // Wait for content to load then trigger print
-        printWindow.onload = () => {
-          printWindow.print()
-        }
-      }
+      await generatePaymentReceiptPDF(payment)
       
       toast({
         title: "Success",
-        description: "Payment receipt generated successfully"
+        description: "Payment receipt PDF downloaded successfully"
       })
     } catch (error) {
+      console.error('Error generating receipt PDF:', error)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to generate receipt"
+        description: "Failed to generate receipt PDF"
       })
     } finally {
       setDownloading(false)
     }
   }
 
-  const generateReceiptHTML = () => {
-    if (!payment) return ''
+  const handlePrint = () => {
+    if (!payment) return
     
-    return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Payment Receipt ${payment.payment_reference}</title>
-        <style>
-          body { font-family: Arial, sans-serif; margin: 20px; }
-          .header { text-align: center; margin-bottom: 30px; }
-          .receipt-details { margin-bottom: 30px; }
-          .student-details { margin-bottom: 30px; }
-          .payment-summary { margin-bottom: 30px; }
-          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-          th { background-color: #f2f2f2; }
-          .total { font-weight: bold; font-size: 18px; }
-          .status { padding: 4px 8px; border-radius: 4px; }
-          .status.confirmed { background: #d1fae5; color: #065f46; }
-          .status.pending { background: #fef3c7; color: #92400e; }
-          .status.failed { background: #fee2e2; color: #991b1b; }
-        </style>
-      </head>
-      <body>
-        <div class="header">
-          <h1>ROYAL FEES MANAGEMENT SYSTEM</h1>
-          <h2>PAYMENT RECEIPT</h2>
-        </div>
-        
-        <div class="receipt-details">
-          <table>
-            <tr>
-              <td><strong>Payment Reference:</strong></td>
-              <td>${payment.payment_reference}</td>
-              <td><strong>Status:</strong></td>
-              <td><span class="status ${payment.status}">${payment.status.toUpperCase()}</span></td>
-            </tr>
-            <tr>
-              <td><strong>Payment Date:</strong></td>
-              <td>${formatDate(payment.payment_date)}</td>
-              <td><strong>Payment Method:</strong></td>
-              <td>${payment.payment_method.replace('_', ' ').toUpperCase()}</td>
-            </tr>
-            <tr>
-              <td><strong>Amount Paid:</strong></td>
-              <td class="total">${formatCurrency(payment.amount)}</td>
-              <td><strong>Transaction Ref:</strong></td>
-              <td>${payment.transaction_reference || 'N/A'}</td>
-            </tr>
-            ${payment.bank_name ? `
-            <tr>
-              <td><strong>Bank:</strong></td>
-              <td>${payment.bank_name}</td>
-              <td colspan="2"></td>
-            </tr>
-            ` : ''}
-          </table>
-        </div>
-
-        <div class="student-details">
-          <h3>Student Information</h3>
-          <table>
-            <tr>
-              <td><strong>Student Name:</strong></td>
-              <td>${payment.invoice?.student?.first_name} ${payment.invoice?.student?.last_name}</td>
-              <td><strong>Student ID:</strong></td>
-              <td>${payment.invoice?.student?.student_id}</td>
-            </tr>
-            <tr>
-              <td><strong>Class:</strong></td>
-              <td>${classLevelToDisplay(payment.invoice?.student?.class_level || '')}</td>
-              <td><strong>Invoice Number:</strong></td>
-              <td>${payment.invoice?.invoice_number}</td>
-            </tr>
-          </table>
-        </div>
-
-        <div class="payment-summary">
-          <h3>Payment Summary</h3>
-          <table>
-            <tr>
-              <td><strong>Invoice Total:</strong></td>
-              <td>${formatCurrency(payment.invoice?.total_amount || 0)}</td>
-            </tr>
-            <tr>
-              <td><strong>Amount Paid (This Payment):</strong></td>
-              <td class="total">${formatCurrency(payment.amount)}</td>
-            </tr>
-            <tr>
-              <td><strong>Outstanding Balance:</strong></td>
-              <td>${formatCurrency((payment.invoice?.total_amount || 0) - (payment.invoice?.paid_amount || 0))}</td>
-            </tr>
-          </table>
-        </div>
-
-        ${payment.notes ? `
-        <div class="notes">
-          <h3>Notes</h3>
-          <p>${payment.notes}</p>
-        </div>
-        ` : ''}
-
-        <div style="margin-top: 50px; text-align: center; font-size: 12px; color: #666;">
-          Receipt generated on ${formatDate(new Date().toISOString())} | Royal Fees Management System
-        </div>
-      </body>
-      </html>
-    `
+    try {
+      printPaymentReceipt(payment)
+      toast({
+        title: "Success",
+        description: "Payment receipt sent to printer"
+      })
+    } catch (error) {
+      console.error('Error printing receipt:', error)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to print receipt"
+      })
+    }
   }
 
   const getStatusIcon = (status: string) => {
@@ -403,7 +301,7 @@ export function PaymentDetailsPage() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => window.print()}
+              onClick={handlePrint}
             >
               <Printer className="h-4 w-4 mr-2" />
               Print Receipt

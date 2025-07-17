@@ -18,6 +18,7 @@ import {
   getPaymentStatistics,
   validateInvoicePayments
 } from "@/lib/paymentService"
+import { generatePaymentReceiptPDF } from "@/lib/pdfUtils"
 import type { PaymentWithDetails, PaymentMethod } from "@/types"
 import {
   Search,
@@ -332,6 +333,45 @@ notes: ''
       })
     } finally {
       setConfirming(null)
+    }
+  }
+
+  const handleDownloadReceipt = async (payment: PaymentWithDetails) => {
+    try {
+      setDownloading(true)
+      await generatePaymentReceiptPDF(payment)
+      
+      toast({
+        title: "Receipt Downloaded",
+        description: "Payment receipt downloaded successfully"
+      })
+      
+      // Log the download activity
+      const { data: currentUser } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', user?.email)
+        .single()
+
+      if (currentUser) {
+        await supabase
+          .from('activity_logs')
+          .insert({
+            user_id: currentUser.id,
+            activity_type: 'receipt_downloaded',
+            description: `Receipt downloaded: ${payment.payment_reference}`,
+            entity_type: 'payment',
+            entity_id: payment.id
+          })
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to download receipt"
+      })
+    } finally {
+      setDownloading(false)
     }
   }
 
@@ -872,6 +912,14 @@ notes: ''
                           onClick={() => navigate(`/payments/${payment.id}`)}
                         >
                           <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleDownloadReceipt(payment)}
+                          disabled={downloading}
+                        >
+                          <Download className="h-4 w-4" />
                         </Button>
                         {payment.status === 'pending' && userRole === 'admin' && (
                           <Button 
