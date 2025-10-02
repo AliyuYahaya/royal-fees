@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  royalfees:
+    build: .
+    container_name: royal-fees
+    restart: always
+    networks:
+      - npm_proxy
+
+networks:
+  npm_proxy:
+    external: true
